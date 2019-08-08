@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--
+        Base application theme, dependent on API level. This theme is replaced
+        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
+    -->
+    <style name="AppBaseTheme" parent="android:Theme.Light">
+        <!--
+            Theme customizations available in newer API levels can go in
+            res/values-vXX/styles.xml, while customizations related to
+            backward-compatibility can go here.
+        -->
+    </style>
+
+    <!-- Application theme -->
+    <style name="AppTheme" parent="AppBaseTheme">
+
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+    <!-- <item name="android:fontFamily">sans-serif-light</item> -->
+
+    <style name="ButtonTextInverse">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="ButtonText">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">#7A7A7A</item>
+    </style>
+    <style name="ButtonTextSmall">
+        <item name="android:textSize">10sp</item>
+        <item name="android:textColor">#7A7A7A</item>
+    </style>
+
+    <style name="ButtonTextBold">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">#7A7A7A</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="BigButtonText">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">#000000</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    
+    <style name="BigButtonTextBold">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">#000000</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    
+    <style name="ButtonNormalOn">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">#7A7A7A</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="ButtonNormalOff">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="ButtonNormalSelected">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/red</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    
+    <style name="ButtonSmallOn">
+        <item name="android:textSize">10sp</item>
+        <item name="android:textColor">#7A7A7A</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="ButtonSmallOff">
+        <item name="android:textSize">10sp</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+
+    <style name="NormalText">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">#7A7A7A</item>
+    </style>
+
+    <style name="CardButtons">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">#7A7A7A</item>
+    </style>
+
+    <style name="HomeTileHeading">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">#4C4C4C</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="HomeTileSubheading">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">#7A7A7A</item>
+    </style>
+    
+    <style name="Notice">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">#535353</item>
+    </style>
+    
+    <style name="NoticeMinor">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">#7A7A7A</item>
+    </style>
+    
+    <style name="Notice2">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">#7A7A7A</item>
+    </style>
+
+    <style name="LocationHeading">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">#535353</item>
+    </style>
+
+    <style name="LocationSubheading">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">#535353</item>
+    </style>
+    
+    <style name="InlineNotificationHeading">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">#535353</item>
+    </style>
+
+    <style name="InlineNotificationSubheading">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">#b5b5b5</item>
+    </style>
+    
+    <style name="ListHeading">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">#4C4C4C</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="ListSubheading">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">#7A7A7A</item>
+    </style>
+
+    <style name="MiniTileItemCaption">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">#000000</item>
+    </style>
+
+    <style name="FullscreenTheme" parent="android:Theme.NoTitleBar">
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowBackground">@null</item>
+        <item name="buttonBarStyle">@style/ButtonBar</item>
+        <item name="buttonBarButtonStyle">@style/ButtonBarButton</item>
+    </style>
+
+    <style name="ButtonBar">
+        <item name="android:paddingLeft">2dp</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingRight">2dp</item>
+        <item name="android:paddingBottom">0dp</item>
+        <item name="android:background">@android:drawable/bottom_bar</item>
+    </style>
+    
+    <style name="ButtonBarButton" />
+
+    <style name="LoginFormContainer">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">16dp</item>
+    </style>
+
+</resources>

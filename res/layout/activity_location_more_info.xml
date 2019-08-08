@@ -1,0 +1,156 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activityLocationHome"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_body"
+    android:orientation="vertical"
+    tools:context=".LocationHomeActivity" >
+
+    <include
+        android:id="@+id/headerLine"
+        layout="@layout/snippet_location_menu" />
+
+    <ScrollView
+        android:id="@+id/pageContentScroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/headerLine"
+        android:overScrollMode="never"
+        android:scrollbars="none" >
+
+        <LinearLayout
+            android:id="@+id/pageContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_body"
+            android:gravity="center_horizontal"
+            android:orientation="vertical" >
+
+            <!-- Info section -->
+
+            <LinearLayout
+                android:id="@+id/sectionInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="13dp"
+                android:layout_marginRight="13dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/panel"
+                android:orientation="vertical" >
+
+                <LinearLayout
+                    android:id="@+id/sectionMap"
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="10dp"
+                    android:layout_height="match_parent" >
+
+                    <fragment
+                        android:id="@+id/mapFragment"
+                        android:name="com.google.android.gms.maps.SupportMapFragment"
+                        android:layout_width="match_parent"
+                        android:layout_height="120dp"
+                        class="com.google.android.gms.maps.SupportMapFragment"
+                        android:layerType="software" />
+                </LinearLayout>
+            </LinearLayout>
+            
+            <!-- Hours section -->
+
+            <LinearLayout
+                android:id="@+id/sectionHoursInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="13dp"
+                android:layout_marginRight="13dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/panel"
+                android:orientation="vertical" >
+
+                <LinearLayout
+                    android:id="@+id/sectionHours"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/selectable_item"
+                    android:gravity="center_vertical"
+                    android:padding="15dp" >
+
+                    <ImageView
+                        android:id="@+id/hoursIcon"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ico_clock_48" />
+
+                    <at.looksy.fragment.TextViewRobotoMedium
+                        android:id="@+id/hoursField"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:textAppearance="@style/Notice" />
+
+                    <at.looksy.fragment.TextViewRobotoLight
+                        android:id="@+id/hoursContent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:textAppearance="@style/Notice" />
+                </LinearLayout>
+
+                <include
+                    layout="@layout/snippet_line" />
+
+                <LinearLayout
+                    android:id="@+id/sectionHoursFull"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="10dp"
+                    android:orientation="vertical" />
+                
+            </LinearLayout>
+
+            <!-- About section -->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="13dp"
+                android:layout_marginRight="13dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/panel"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:padding="15dp" >
+
+                <at.looksy.fragment.TextViewRobotoMedium
+                    android:id="@+id/headingAbout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/Notice" />
+
+                <at.looksy.fragment.TextViewRobotoLight
+                    android:id="@+id/bodyAbout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:textAppearance="@style/Notice" />
+            </LinearLayout>
+
+            <!-- Bottom padding -->
+
+            <LinearLayout
+                android:id="@+id/sectionClosing"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:orientation="vertical" >
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <include
+        android:id="@+id/include2"
+        layout="@layout/snippet_progress_indicator" />
+
+</RelativeLayout>

@@ -1,0 +1,162 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activityWifiListRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_body"
+    android:orientation="vertical"
+    tools:context=".WifiListingActivity" >
+
+    <include
+        android:id="@+id/menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        layout="@layout/snippet_main_menu" />
+
+    <ScrollView
+        android:id="@+id/contentScroller"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/menu"
+        android:scrollbars="none" >
+
+        <LinearLayout
+            android:id="@+id/masterBucket"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:orientation="vertical" >
+
+            <RelativeLayout
+                android:id="@+id/main_heading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" >
+
+                <at.looksy.fragment.TextViewRobotoRegular
+                    android:id="@+id/title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:padding="2dp"
+                    android:text="@string/title_your_wifi_info"
+                    android:textAppearance="@style/Notice" />
+
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    style="?android:attr/progressBarStyleSmall"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_alignBottom="@+id/title"
+                    android:layout_toRightOf="@+id/title" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/entryNotConnected"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/panel"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="20dp"
+                android:visibility="gone" >
+
+                <at.looksy.fragment.TextViewRobotoRegular
+                    android:id="@+id/textNotConnected"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Not connected to a WiFi access point"
+                    android:textAppearance="@style/Notice" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/entryConnected"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/panel"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="20dp"
+                android:visibility="gone" >
+
+                <ImageView
+                    android:id="@+id/icoSignalStrength"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:padding="5dp" />
+
+                <LinearLayout
+                    android:id="@+id/layoutInfo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" >
+
+                    <at.looksy.fragment.TextViewRobotoMedium
+                        android:id="@+id/textSsid"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="2dp"
+                        android:textAppearance="@style/ListSubheading"
+                        android:visibility="gone" />
+
+                    <at.looksy.fragment.TextViewRobotoMedium
+                        android:id="@+id/textBssid"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="2dp"
+                        android:textAppearance="@style/ListHeading" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/main_heading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp" >
+
+                <at.looksy.fragment.TextViewRobotoRegular
+                    android:id="@+id/title2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:text="Other Networks"
+                    android:textAppearance="@style/Notice" />
+
+                <at.looksy.fragment.TextViewRobotoRegular
+                    android:id="@+id/btnShowAllNetworks"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/btn_normal_on"
+                    android:text="Show All"
+                    android:textAppearance="@style/ButtonNormalOn" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/wifiListing"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone" >
+            </LinearLayout>
+            
+            <!-- Bottom padding -->
+
+            <LinearLayout
+                android:id="@+id/sectionClosing"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:orientation="vertical" >
+            </LinearLayout>
+            
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>

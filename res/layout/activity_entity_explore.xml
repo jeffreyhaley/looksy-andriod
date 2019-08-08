@@ -1,0 +1,18 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activityMiniTilesRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_body"
+    android:orientation="vertical"
+    tools:context=".EntityExploreActivity" >
+
+    <include
+        android:id="@+id/include1"
+        layout="@layout/snippet_tile_scroller" />
+
+	<include
+        android:id="@+id/include2"
+        layout="@layout/snippet_progress_indicator" />
+    
+</RelativeLayout>

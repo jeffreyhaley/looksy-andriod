@@ -1,0 +1,58 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activityHomeRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_body"
+    android:orientation="vertical"
+    tools:context=".SearchActivity" >
+
+    <include
+        android:id="@+id/menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        layout="@layout/snippet_main_menu" />
+
+    <EditText
+        android:id="@+id/searchBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/menu"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/panel"
+        android:hint="Find a location"
+        android:inputType="textCapWords"
+        android:padding="10dp"
+        android:textAppearance="@style/Notice" >
+
+        <requestFocus />
+    </EditText>
+    
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/menu"
+        android:layout_marginTop="5dp"
+        android:layout_alignRight="@id/searchBox"
+        android:padding="10dp" />
+
+    <ScrollView
+        android:id="@+id/viewScroller"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/searchBox"
+        android:scrollbars="none" >
+
+        <LinearLayout
+            android:id="@+id/searchResultList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+        </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>

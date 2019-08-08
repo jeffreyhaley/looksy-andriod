@@ -1,0 +1,96 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/miniTile"
+    android:layout_width="150dp"
+    android:layout_height="wrap_content"
+    android:background="@drawable/panel"
+    android:clipChildren="false"
+    android:gravity="top|center" >
+
+    <LinearLayout
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="top|center"
+        android:orientation="vertical" >
+
+        <ImageView
+            android:id="@+id/image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <at.looksy.fragment.TextViewRobotoLight
+            android:id="@+id/caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:gravity="left"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="5dp"
+            android:textAppearance="@style/MiniTileItemCaption" />
+
+        <at.looksy.fragment.TextViewRobotoRegular
+            android:id="@+id/textTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="10dp"
+            android:textAppearance="@style/ButtonText" />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/menu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/content"
+        android:background="@drawable/panel_menu" >
+
+        <LinearLayout
+            android:id="@+id/loveBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:layout_alignParentLeft="true"
+            android:background="@drawable/selectable_item"
+            android:padding="10dp" >
+
+            <ImageView
+                android:id="@+id/loveBtnIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <at.looksy.fragment.TextViewRobotoRegular
+                android:id="@+id/loveBtnText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3dp"
+                android:textAppearance="@style/ButtonTextSmall" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/shareBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/selectable_item"
+            android:padding="10dp" >
+
+            <ImageView
+                android:id="@+id/shareBtnIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ico_share_v2" />
+
+            <at.looksy.fragment.TextViewRobotoRegular
+                android:id="@+id/shareBtnText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3dp"
+                android:text="Share"
+                android:textAppearance="@style/ButtonTextSmall" />
+        </LinearLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

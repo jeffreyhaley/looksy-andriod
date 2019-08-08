@@ -1,0 +1,998 @@
+<<<<<<< HEAD
+package com.shoebox.service;
+
+import java.util.List;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.shoebox.annotate.AsyncRequest;
+import com.shoebox.annotate.SyncRequest;
+import com.shoebox.cache.DataCache;
+import com.shoebox.cache.DataCache.CacheType;
+import com.shoebox.core.Constants;
+import com.shoebox.dataitem.EntityDataItem;
+import com.shoebox.dataitem.ImageCaptionDataItem;
+import com.shoebox.manager.DeviceManager;
+import com.shoebox.service.consumer.IWebServiceAsyncConsumer;
+import com.shoebox.service.data.WebServiceRequest;
+import com.shoebox.service.task.WebServiceConnectionTask;
+
+public class WebService {
+
+	private IWebServiceAsyncConsumer consumer;
+
+	public WebService(IWebServiceAsyncConsumer consumer) {
+		this.consumer = consumer;
+	}
+
+	private static void preamble(JSONObject data)
+	{
+		try {
+			// always send out deviceId
+			data.put(Constants.JSON_FIELD_DEVICE_UUID, DeviceManager.getDeviceId());
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static WebServiceRequest assembleRequest(String action, JSONObject jsonData) {
+
+		WebServiceRequest wsRequest = new WebServiceRequest();
+		try {
+			wsRequest.put(Constants.WEB_SERVICE_ACTION, action);
+			wsRequest.put(Constants.WEB_SERVICE_DATA, jsonData);
+
+			wsRequest.setRequestAction(action);
+			wsRequest.setRequestData(jsonData);
+
+		} catch (JSONException e) { e.printStackTrace(); }
+
+		return wsRequest;
+	}
+
+	/**
+	 * Send a synchronous request to the web service.
+	 * @param jsonRequestData
+	 * @return
+	 */
+	private static JSONObject sendSyncRequest(String action, JSONObject jsonRequestData)
+	{
+		preamble(jsonRequestData);
+		WebServiceRequest wsRequest = assembleRequest(action, jsonRequestData);
+		try {
+			return new WebServiceConnectionTask().execute(wsRequest).get();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
+	 * Send an asynchronous request to the web service.
+	 * @param action
+	 * @param jsonRequestData
+	 */
+	private static void sendAsyncRequest(String action, JSONObject jsonRequestData)
+	{
+		preamble(jsonRequestData);
+		WebServiceRequest wsRequest = assembleRequest(action, jsonRequestData);
+		new WebServiceConnectionTask().execute(wsRequest);
+	}
+
+	private void sendAsyncRequestV2(String action, JSONObject jsonRequestData)
+	{
+		preamble(jsonRequestData);
+		WebServiceRequest wsRequest = assembleRequest(action, jsonRequestData);
+		WebServiceConnectionTask task = new WebServiceConnectionTask(consumer);
+		task.execute((WebServiceRequest)wsRequest);
+	}
+
+	/**
+	 * Get a list of registered entities for the provided BSSID list.
+	 * @param bssidList List of BSSIDs
+	 * @return map containing the BSSID-to-data item pairings
+	 */
+	@AsyncRequest
+	public void getLocationsForBSSIDs(List<String> bssidList)
+	{
+		JSONObject jsonRequestData = new JSONObject();
+		JSONArray jsonBssidRequestList = new JSONArray();
+
+		for (String bssid : bssidList)
+			jsonBssidRequestList.put(bssid);
+
+		try {
+			jsonRequestData.put(Constants.JSON_FIELD_BSSID_LIST, jsonBssidRequestList.toString());
+
+			sendAsyncRequestV2(
+					Constants.JSON_METHOD_GET_LOCATIONS_FOR_BSSIDS, 
+					jsonRequestData);
+
+		} catch (JSONException e) {	e.printStackTrace(); }
+
+	}
+
+	/**
+	 * Get a list of registered entities for the provided BSSID list.
+	 * @param bssidList List of BSSIDs
+	 * @return map containing the BSSID-to-data item pairings
+	 */
+	@AsyncRequest
+	public void getLocationCountForBSSIDs(List<String> bssidList)
+	{
+		JSONObject jsonRequestData = new JSONObject();
+		JSONArray jsonBssidRequestList = new JSONArray();
+		
+		if (bssidList.isEmpty())
+			return;
+
+		for (String bssid : bssidList)
+			jsonBssidRequestList.put(bssid);
+
+		try {
+			jsonRequestData.put(Constants.JSON_FIELD_BSSID_LIST, 
+					jsonBssidRequestList.toString());
+
+			sendAsyncRequestV2(
+					Constants.JSON_METHOD_GET_LOCATION_COUNT_FOR_BSSIDS, 
+					jsonRequestData);
+
+		} catch (JSONException e) {	e.printStackTrace(); }
+	}
+
+	/**
+	 * Get a list of starred tiles for the registered user.
+	 * @param deviceId ID of registered user
+	 * @return map containing the BSSID-to-data item pairings starred by user
+	 */
+	@AsyncRequest
+	public void getFavoriteLocationsForDevice()
+	{
+		sendAsyncRequestV2(
+				Constants.JSON_METHOD_GET_FAVORITE_LOCATIONS_FOR_DEVICE, 
+				new JSONObject());
+	}
+
+	/**
+	 * Update a location's star-ness.
+	 * @param locationId object's ID
+	 * @param starred true to star, else false
+	 * @return true if starring ok, else false
+	 */
+	@AsyncRequest
+	public static void updateLocationFavoriteStatus(String locationId, boolean starred)
+	{
+		JSONObject jsonRequestData = new JSONObject();
+		DataCache dataCache = DataCache.getInstance();
+
+		try {
+			jsonRequestData.put(Constants.JSON_FIELD_LOCATION_ID, locationId);
+			jsonRequestData.put(Constants.JSON_FIELD_FAVORITE, starred);
+
+			// send request
+			sendAsyncRequest(
+					Constants.JSON_METHOD_UPDATE_LOCATION_FAVORITE_STATUS, 
+					jsonRequestData);
+
+			// invalidate cache
+			if (dataCache.containsEntry(CacheType.LOCATION_BY_ID_CACHE, locationId)) {
+				EntityDataItem itemById = (EntityDataItem) dataCache.getEntry(
+						CacheType.LOCATION_BY_ID_CACHE, locationId);
+				String bssid = itemById.getBSSIDList().get(0);
+
+				dataCache.removeEntry(CacheType.LOCATION_BY_ID_CACHE, locationId);
+				dataCache.removeEntry(CacheType.LOCATION_BY_BSSID_CACHE, bssid);
+			}
+
+		} catch (JSONException e) {	e.printStackTrace(); }
+
+	}
+
+	/**
+	 * Get a count of how many times this location has been starred.
+	 * @param locationId object's ID
+	 * @return star count
+	 */
+	@SyncRequest
+	public static int getLocationFavoriteCount(String locationId)
+	{
+		JSONObject jsonRequestData = new JSONObject();
+		int favoriteCount = 0;
+		DataCache dataCache = DataCache.getInstance();
+
+		// check the cache first
+		if (dataCache.containsEntry(CacheType.LOCATION_BY_ID_CACHE, locationId)) {
+			favoriteCount = 
+					((EntityDataItem) dataCache.getEntry(
+							CacheType.LOCATION_BY_ID_CACHE, locationId)).getStarCount();
+			return favoriteCount;
+		}
+
+		// boo - no cache entry - make the call
+		try {
+			jsonRequestData.put(Constants.JSON_FIELD_LOCATION_ID, locationId);
+
+			JSONObject response = sendSyncRequest(
+					Constants.JSON_METHOD_GET_LOCATION_FAVORITE_COUNT, 
+					jsonRequestData);
+
+			if (response == null)
+				return favoriteCount;
+
+			if (response.getString(Constants.JSON_STATUS).
+					equals(Constants.JSON_STATUS_OK)) 
+			{
+				favoriteCount = ((JSONObject)response.getJSONArray(
+						Constants.WEB_SERVICE_DATA).get(0)).getInt(
+								Constants.JSON_FIELD_FAVORITE_COUNT);
+			}
+
+		} catch (JSONException e) {	e.printStackTrace(); }
+
+		return favoriteCount;
+	}
+
+	/**
+	 * Check if a location is starred
+	 * @param locationId location ID
+	 * @return true if starred, else false
+	 */
+	@SyncRequest
+	public static boolean isLocationFavorite(String locationId) {
+		JSONObject jsonRequestData = new JSONObject();
+		boolean isFavorite = false;
+
+		DataCache dataCache = DataCache.getInstance();
+
+		// check the cache first
+		if (dataCache.containsEntry(CacheType.LOCATION_BY_ID_CACHE, locationId)) {
+			isFavorite = 
+					((EntityDataItem) dataCache.getEntry(
+							CacheType.LOCATION_BY_ID_CACHE, locationId)).isStarred();
+			return isFavorite;
+		}
+
+		// boo - no cache entry - make the call
+		try {
+			jsonRequestData.put(Constants.JSON_FIELD_LOCATION_ID, locationId);
+
+			JSONObject response = sendSyncRequest(
+					Constants.JSON_METHOD_IS_LOCATION_FAVORITE, 
+					jsonRequestData);
+
+			if (response == null)
+				return isFavorite;
+
+			if (response.getString(Constants.JSON_STATUS).
+					equals(Constants.JSON_STATUS_OK)) 
+			{
+				isFavorite = ((JSONObject)response.getJSONArray(
+						Constants.WEB_SERVICE_DATA).get(0)).getInt(
+								Constants.JSON_FIELD_FAVORITE) >= 1;
+			}
+
+		} catch (JSONException e) {	e.printStackTrace(); }
+
+		return isFavorite;
+	}
+
+	/**
+	 * Get a list of items associated with this location.
+	 * @param locationId Location id
+	 * @return List of images and captions
+	 */
+	@AsyncRequest
+	public void getTilesForLocation(String locationId)
+	{
+		JSONObject jsonRequestData = new JSONObject();
+
+		try {
+			jsonRequestData.put(Constants.JSON_FIELD_LOCATION_ID, locationId);
+
+		} catch (JSONException e) {	e.printStackTrace(); }
+
+		sendAsyncRequestV2(
+				Constants.JSON_METHOD_GET_TILES_FOR_LOCATION, 
+				jsonRequestData);
+	}
+
+	/**
+	 * Update a tile's star-ness.
+	 * @param tileId id of tile
+	 * @param starred true to star, else false
+	 * @return true if starring ok, else false
+	 */
+	@AsyncRequest
+	public static void updateTileFavoriteStatus(String tileId, boolean starred)
+	{
+		JSONObject jsonRequestData = new JSONObject();
+		DataCache dataCache = DataCache.getInstance();
+
+		try {
+			jsonRequestData.put(Constants.JSON_FIELD_TILE_ID, tileId);
+			jsonRequestData.put(Constants.JSON_FIELD_FAVORITE, starred);
+
+			sendAsyncRequest(
+					Constants.JSON_METHOD_UPDATE_TILE_FAVORITE_STATUS, 
+					jsonRequestData);
+
+			// update the cache, if entry exists
+			if (dataCache.containsEntry(CacheType.TILE_CACHE, tileId)) {
+				ImageCaptionDataItem item = (ImageCaptionDataItem)
+						dataCache.getEntry(CacheType.TILE_CACHE, tileId);
+
+				// update if starred -- or not
+				item.setStarred(starred);
+
+				// update star count
+				int starCount = item.getStarCount();
+				if (starred) {
+					starCount++;
+				} else {
+					starCount--;
+				}
+				item.setStarCount(starCount);
+			}
+
+		} catch (JSONException e) {	e.printStackTrace(); }
+	}
+
+	/**
+	 * Check if item is starred
+	 * @param tileId object's ID
+	 * @return true if starred, else false
+	 */
+	@SyncRequest
+	public static boolean isTileFavorite(String tileId) {
+		JSONObject jsonRequestData = new JSONObject();
+		boolean isFavorite = false;
+
+		DataCache dataCache = DataCache.getInstance();
+
+		// check the cache first
+		if (dataCache.containsEntry(CacheType.TILE_CACHE, tileId)) {
+			isFavorite = 
+					((ImageCaptionDataItem) dataCache.getEntry(
+							CacheType.TILE_CACHE, tileId)).isStarred();
+			return isFavorite;
+		}
+
+		// boo - no cache entry - make the call
+		try {
+			jsonRequestData.put(Constants.JSON_FIELD_TILE_ID, tileId);
+
+			JSONObject response = sendSyncRequest(
+					Constants.JSON_METHOD_IS_TILE_FAVORITE, 
+					jsonRequestData);
+
+			if (response == null)
+				return isFavorite;
+
+			if (response.getString(Constants.JSON_STATUS).
+					equals(Constants.JSON_STATUS_OK)) 
+			{
+				isFavorite = ((JSONObject)response.getJSONArray(
+						Constants.WEB_SERVICE_DATA).get(0)).getInt(
+								Constants.JSON_FIELD_FAVORITE) >= 1;
+			}
+
+		} catch (JSONException e) {	e.printStackTrace(); }
+
+		return isFavorite;
+	}
+
+	/**
+	 * Register a visit to a tile (i.e. that the user clicked on a tile)
+	 * @param tileId Id of tile visited
+	 * @return
+	 */
+	@AsyncRequest
+	public static void registerUserTileVisit(String tileId)	{
+		JSONObject jsonRequestData = new JSONObject();
+
+		try {
+			jsonRequestData.put(Constants.JSON_FIELD_TILE_ID, tileId);
+
+			sendAsyncRequest(
+					Constants.JSON_METHOD_REGISTER_USER_TILE_VISIT, 
+					jsonRequestData);
+
+		} catch (JSONException e) {	e.printStackTrace(); }
+	}
+
+	/**
+	 * Register a visit to a location (i.e. that the user clicked on a location tile)
+	 * @param locationId Id of location visited
+	 * @return
+	 */
+	@AsyncRequest
+	public static void registerUserLocationVisit(String locationId)	{
+		JSONObject jsonRequestData = new JSONObject();
+
+		try {
+			jsonRequestData.put(Constants.JSON_FIELD_LOCATION_ID, locationId);
+
+			sendAsyncRequest(
+					Constants.JSON_METHOD_REGISTER_USER_LOCATION_VISIT, 
+					jsonRequestData);
+
+		} catch (JSONException e) {	e.printStackTrace(); }
+	}
+
+	/**
+	 * Register a pass by to a location (i.e. that the user passed by a location tile)
+	 * @param locationId Id of location visited
+	 * @return
+	 */
+	@AsyncRequest
+	public static void registerUserLocationPassBy(String locationId)	{
+		JSONObject jsonRequestData = new JSONObject();
+
+		try {
+			jsonRequestData.put(Constants.JSON_FIELD_LOCATION_ID, locationId);
+
+			sendAsyncRequest(
+					Constants.JSON_METHOD_REGISTER_USER_LOCATION_PASS_BY, 
+					jsonRequestData);
+
+		} catch (JSONException e) {	e.printStackTrace(); }
+	}
+
+	/**
+	 * Register this device. This method should be called each time the
+	 * user starts the app.
+	 * @return
+	 */
+	@AsyncRequest
+	public static void registerDevice()	{
+		sendAsyncRequest(Constants.JSON_METHOD_REGISTER_DEVICE, 
+				new JSONObject());
+	}
+
+}
+=======
+package com.shoebox.service;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.shoebox.annotate.AsyncRequest;
+import com.shoebox.annotate.SyncRequest;
+import com.shoebox.cache.DataCache;
+import com.shoebox.cache.DataCache.CacheType;
+import com.shoebox.core.Constants;
+import com.shoebox.dataitem.EntityDataItem;
+import com.shoebox.dataitem.ImageCaptionDataItem;
+import com.shoebox.manager.DeviceManager;
+import com.shoebox.service.consumer.IWebServiceAsyncConsumer;
+import com.shoebox.service.data.WebServiceRequest;
+import com.shoebox.service.task.WebServiceConnectionTask;
+import com.shoebox.util.DataItemUtil;
+
+public class WebService {
+
+	private IWebServiceAsyncConsumer consumer;
+
+	public WebService(IWebServiceAsyncConsumer consumer) {
+		this.consumer = consumer;
+	}
+
+	private static void preamble(JSONObject data)
+	{
+		try {
+			// always send out deviceId
+			data.put(Constants.JSON_FIELD_DEVICE_UUID, DeviceManager.getDeviceId());
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static WebServiceRequest assembleRequest(String action, JSONObject jsonData) {
+
+		WebServiceRequest wsRequest = new WebServiceRequest();
+		try {
+			wsRequest.put(Constants.WEB_SERVICE_ACTION, action);
+			wsRequest.put(Constants.WEB_SERVICE_DATA, jsonData);
+
+			wsRequest.setRequestAction(action);
+			wsRequest.setRequestData(jsonData);
+
+		} catch (JSONException e) { e.printStackTrace(); }
+
+		return wsRequest;
+	}
+
+	/**
+	 * Send a synchronous request to the web service.
+	 * @param jsonRequestData
+	 * @return
+	 */
+	private static JSONObject sendSyncRequest(String action, JSONObject jsonRequestData)
+	{
+		preamble(jsonRequestData);
+		WebServiceRequest wsRequest = assembleRequest(action, jsonRequestData);
+		try {
+			return new WebServiceConnectionTask().execute(wsRequest).get();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
+	 * Send an asynchronous request to the web service.
+	 * @param action
+	 * @param jsonRequestData
+	 */
+	private static void sendAsyncRequest(String action, JSONObject jsonRequestData)
+	{
+		preamble(jsonRequestData);
+		WebServiceRequest wsRequest = assembleRequest(action, jsonRequestData);
+		new WebServiceConnectionTask().execute(wsRequest);
+	}
+
+	private void sendAsyncRequestV2(String action, JSONObject jsonRequestData)
+	{
+		preamble(jsonRequestData);
+		WebServiceRequest wsRequest = assembleRequest(action, jsonRequestData);
+		WebServiceConnectionTask task = new WebServiceConnectionTask(consumer);
+		task.execute((WebServiceRequest)wsRequest);
+	}
+
+	/**
+	 * Get a list of registered entities for the provided BSSID list.
+	 * @param bssidList List of BSSIDs
+	 * @return map containing the BSSID-to-data item pairings
+	 */
+	@SyncRequest
+	@Deprecated
+	public static Map<String,EntityDataItem> getLocationsForBSSIDsDeprecated(List<String> bssidList)
+	{
+		JSONObject jsonRequestData = new JSONObject();
+		JSONArray jsonBssidRequestList = new JSONArray();
+		Map<String,EntityDataItem> map = new HashMap<String,EntityDataItem>();
+		Map<String,String> bssidNotFoundMap = new HashMap<String,String>();
+
+		// init the cache
+		DataCache dataCache = DataCache.getInstance();
+
+		// prepare request and init bssid not found cache
+		for (String bssid : bssidList) {
+			// check the bssid not found cache to make sure we haven't seen this yet
+			if (!dataCache.containsEntry(CacheType.BSSID_NOT_FOUND_CACHE, bssid)) {
+				// prepare BSSID list request
+				if (dataCache.containsEntry(CacheType.LOCATION_BY_BSSID_CACHE, bssid)) {
+					// don't bother with the request for this bssid - grab entry from cache
+					map.put(bssid, (EntityDataItem)dataCache.getEntry(
+							CacheType.LOCATION_BY_BSSID_CACHE, bssid));
+
+				} else {
+					// we really need to look this up
+					jsonBssidRequestList.put(bssid);
+
+					// assume we can't find this bssid -- if we do, we'll remove the entry later
+					bssidNotFoundMap.put(bssid, bssid);
+				}
+			}
+		}
+
+		// if nothing new, don't make the call
+		if (jsonBssidRequestList.length() == 0)
+			return map;
+
+		try {
+			jsonRequestData.put(Constants.JSON_FIELD_BSSID_LIST, jsonBssidRequestList.toString());
+
+			JSONObject response = sendSyncRequest(
+					Constants.JSON_METHOD_GET_LOCATIONS_FOR_BSSIDS, 
+					jsonRequestData);
+
+			if (response == null)
+				return map;
+
+			if (response.getString(Constants.JSON_STATUS).
+					equals(Constants.JSON_STATUS_OK)) 
+			{
+				List<EntityDataItem> entityList = 
+						DataItemUtil.decodeJSONLocations(
+								response.getJSONArray((Constants.WEB_SERVICE_DATA)));
+				for (EntityDataItem item : entityList) {
+					// prepare return map
+					map.put(item.getBSSIDList().get(0), item);
+
+					// cache the return data
+					dataCache.putEntry(CacheType.LOCATION_BY_ID_CACHE, item.getId(), item);
+					dataCache.putEntry(CacheType.LOCATION_BY_BSSID_CACHE, item.getBSSIDList().get(0), item);
+
+					// update bssid not found map -- if we found something
+					for (String bssid : item.getBSSIDList()) {
+						bssidNotFoundMap.remove(bssid);
+					}
+				}
+
+				// update the bssid not found cache
+				for (Map.Entry<String, String> entry : bssidNotFoundMap.entrySet()) {
+					dataCache.putEntry(CacheType.BSSID_NOT_FOUND_CACHE, entry.getKey(), Boolean.valueOf(true));
+				}
+			}
+
+		} catch (JSONException e) {	e.printStackTrace(); }
+
+		return map;
+	}
+
+	/**
+	 * Get a list of registered entities for the provided BSSID list.
+	 * @param bssidList List of BSSIDs
+	 * @return map containing the BSSID-to-data item pairings
+	 */
+	@AsyncRequest
+	public void getLocationsForBSSIDs(List<String> bssidList)
+	{
+		JSONObject jsonRequestData = new JSONObject();
+		JSONArray jsonBssidRequestList = new JSONArray();
+
+		for (String bssid : bssidList)
+			jsonBssidRequestList.put(bssid);
+
+		try {
+			jsonRequestData.put(Constants.JSON_FIELD_BSSID_LIST, jsonBssidRequestList.toString());
+
+			sendAsyncRequestV2(
+					Constants.JSON_METHOD_GET_LOCATIONS_FOR_BSSIDS, 
+					jsonRequestData);
+
+		} catch (JSONException e) {	e.printStackTrace(); }
+
+	}
+
+	/**
+	 * Get a list of registered entities for the provided BSSID list.
+	 * @param bssidList List of BSSIDs
+	 * @return map containing the BSSID-to-data item pairings
+	 */
+	@AsyncRequest
+	public void getLocationCountForBSSIDs(List<String> bssidList)
+	{
+		JSONObject jsonRequestData = new JSONObject();
+		JSONArray jsonBssidRequestList = new JSONArray();
+		
+		if (bssidList.isEmpty())
+			return;
+
+		for (String bssid : bssidList)
+			jsonBssidRequestList.put(bssid);
+
+		try {
+			jsonRequestData.put(Constants.JSON_FIELD_BSSID_LIST, 
+					jsonBssidRequestList.toString());
+
+			sendAsyncRequestV2(
+					Constants.JSON_METHOD_GET_LOCATION_COUNT_FOR_BSSIDS, 
+					jsonRequestData);
+
+		} catch (JSONException e) {	e.printStackTrace(); }
+	}
+
+	/**
+	 * Get a list of starred tiles for the registered user.
+	 * @param deviceId ID of registered user
+	 * @return map containing the BSSID-to-data item pairings starred by user
+	 */
+	@AsyncRequest
+	public void getFavoriteLocationsForDevice()
+	{
+		sendAsyncRequestV2(
+				Constants.JSON_METHOD_GET_FAVORITE_LOCATIONS_FOR_DEVICE, 
+				new JSONObject());
+	}
+
+	/**
+	 * Update a location's star-ness.
+	 * @param locationId object's ID
+	 * @param starred true to star, else false
+	 * @return true if starring ok, else false
+	 */
+	@AsyncRequest
+	public static void updateLocationFavoriteStatus(String locationId, boolean starred)
+	{
+		JSONObject jsonRequestData = new JSONObject();
+		DataCache dataCache = DataCache.getInstance();
+
+		try {
+			jsonRequestData.put(Constants.JSON_FIELD_LOCATION_ID, locationId);
+			jsonRequestData.put(Constants.JSON_FIELD_FAVORITE, starred);
+
+			// send request
+			sendAsyncRequest(
+					Constants.JSON_METHOD_UPDATE_LOCATION_FAVORITE_STATUS, 
+					jsonRequestData);
+
+			// invalidate cache
+			if (dataCache.containsEntry(CacheType.LOCATION_BY_ID_CACHE, locationId)) {
+				EntityDataItem itemById = (EntityDataItem) dataCache.getEntry(
+						CacheType.LOCATION_BY_ID_CACHE, locationId);
+				String bssid = itemById.getBSSIDList().get(0);
+
+				dataCache.removeEntry(CacheType.LOCATION_BY_ID_CACHE, locationId);
+				dataCache.removeEntry(CacheType.LOCATION_BY_BSSID_CACHE, bssid);
+			}
+
+		} catch (JSONException e) {	e.printStackTrace(); }
+
+	}
+
+	/**
+	 * Get a count of how many times this location has been starred.
+	 * @param locationId object's ID
+	 * @return star count
+	 */
+	@SyncRequest
+	public static int getLocationFavoriteCount(String locationId)
+	{
+		JSONObject jsonRequestData = new JSONObject();
+		int favoriteCount = 0;
+		DataCache dataCache = DataCache.getInstance();
+
+		// check the cache first
+		if (dataCache.containsEntry(CacheType.LOCATION_BY_ID_CACHE, locationId)) {
+			favoriteCount = 
+					((EntityDataItem) dataCache.getEntry(
+							CacheType.LOCATION_BY_ID_CACHE, locationId)).getStarCount();
+			return favoriteCount;
+		}
+
+		// boo - no cache entry - make the call
+		try {
+			jsonRequestData.put(Constants.JSON_FIELD_LOCATION_ID, locationId);
+
+			JSONObject response = sendSyncRequest(
+					Constants.JSON_METHOD_GET_LOCATION_FAVORITE_COUNT, 
+					jsonRequestData);
+
+			if (response == null)
+				return favoriteCount;
+
+			if (response.getString(Constants.JSON_STATUS).
+					equals(Constants.JSON_STATUS_OK)) 
+			{
+				favoriteCount = ((JSONObject)response.getJSONArray(
+						Constants.WEB_SERVICE_DATA).get(0)).getInt(
+								Constants.JSON_FIELD_FAVORITE_COUNT);
+			}
+
+		} catch (JSONException e) {	e.printStackTrace(); }
+
+		return favoriteCount;
+	}
+
+	/**
+	 * Check if a location is starred
+	 * @param locationId location ID
+	 * @return true if starred, else false
+	 */
+	@SyncRequest
+	public static boolean isLocationFavorite(String locationId) {
+		JSONObject jsonRequestData = new JSONObject();
+		boolean isFavorite = false;
+
+		DataCache dataCache = DataCache.getInstance();
+
+		// check the cache first
+		if (dataCache.containsEntry(CacheType.LOCATION_BY_ID_CACHE, locationId)) {
+			isFavorite = 
+					((EntityDataItem) dataCache.getEntry(
+							CacheType.LOCATION_BY_ID_CACHE, locationId)).isStarred();
+			return isFavorite;
+		}
+
+		// boo - no cache entry - make the call
+		try {
+			jsonRequestData.put(Constants.JSON_FIELD_LOCATION_ID, locationId);
+
+			JSONObject response = sendSyncRequest(
+					Constants.JSON_METHOD_IS_LOCATION_FAVORITE, 
+					jsonRequestData);
+
+			if (response == null)
+				return isFavorite;
+
+			if (response.getString(Constants.JSON_STATUS).
+					equals(Constants.JSON_STATUS_OK)) 
+			{
+				isFavorite = ((JSONObject)response.getJSONArray(
+						Constants.WEB_SERVICE_DATA).get(0)).getInt(
+								Constants.JSON_FIELD_FAVORITE) >= 1;
+			}
+
+		} catch (JSONException e) {	e.printStackTrace(); }
+
+		return isFavorite;
+	}
+
+	/**
+	 * Get a list of items associated with this location.
+	 * @param locationId Location id
+	 * @return List of images and captions
+	 */
+	@AsyncRequest
+	public void getTilesForLocation(String locationId)
+	{
+		JSONObject jsonRequestData = new JSONObject();
+
+		try {
+			jsonRequestData.put(Constants.JSON_FIELD_LOCATION_ID, locationId);
+
+		} catch (JSONException e) {	e.printStackTrace(); }
+
+		sendAsyncRequestV2(
+				Constants.JSON_METHOD_GET_TILES_FOR_LOCATION, 
+				jsonRequestData);
+	}
+
+	/**
+	 * Update a tile's star-ness.
+	 * @param tileId id of tile
+	 * @param starred true to star, else false
+	 * @return true if starring ok, else false
+	 */
+	@AsyncRequest
+	public static void updateTileFavoriteStatus(String tileId, boolean starred)
+	{
+		JSONObject jsonRequestData = new JSONObject();
+		DataCache dataCache = DataCache.getInstance();
+
+		try {
+			jsonRequestData.put(Constants.JSON_FIELD_TILE_ID, tileId);
+			jsonRequestData.put(Constants.JSON_FIELD_FAVORITE, starred);
+
+			sendAsyncRequest(
+					Constants.JSON_METHOD_UPDATE_TILE_FAVORITE_STATUS, 
+					jsonRequestData);
+
+			// update the cache, if entry exists
+			if (dataCache.containsEntry(CacheType.TILE_CACHE, tileId)) {
+				ImageCaptionDataItem item = (ImageCaptionDataItem)
+						dataCache.getEntry(CacheType.TILE_CACHE, tileId);
+
+				// update if starred -- or not
+				item.setStarred(starred);
+
+				// update star count
+				int starCount = item.getStarCount();
+				if (starred) {
+					starCount++;
+				} else {
+					starCount--;
+				}
+				item.setStarCount(starCount);
+			}
+
+		} catch (JSONException e) {	e.printStackTrace(); }
+	}
+
+	/**
+	 * Check if item is starred
+	 * @param tileId object's ID
+	 * @return true if starred, else false
+	 */
+	@SyncRequest
+	public static boolean isTileFavorite(String tileId) {
+		JSONObject jsonRequestData = new JSONObject();
+		boolean isFavorite = false;
+
+		DataCache dataCache = DataCache.getInstance();
+
+		// check the cache first
+		if (dataCache.containsEntry(CacheType.TILE_CACHE, tileId)) {
+			isFavorite = 
+					((ImageCaptionDataItem) dataCache.getEntry(
+							CacheType.TILE_CACHE, tileId)).isStarred();
+			return isFavorite;
+		}
+
+		// boo - no cache entry - make the call
+		try {
+			jsonRequestData.put(Constants.JSON_FIELD_TILE_ID, tileId);
+
+			JSONObject response = sendSyncRequest(
+					Constants.JSON_METHOD_IS_TILE_FAVORITE, 
+					jsonRequestData);
+
+			if (response == null)
+				return isFavorite;
+
+			if (response.getString(Constants.JSON_STATUS).
+					equals(Constants.JSON_STATUS_OK)) 
+			{
+				isFavorite = ((JSONObject)response.getJSONArray(
+						Constants.WEB_SERVICE_DATA).get(0)).getInt(
+								Constants.JSON_FIELD_FAVORITE) >= 1;
+			}
+
+		} catch (JSONException e) {	e.printStackTrace(); }
+
+		return isFavorite;
+	}
+
+	/**
+	 * Register a visit to a tile (i.e. that the user clicked on a tile)
+	 * @param tileId Id of tile visited
+	 * @return
+	 */
+	@AsyncRequest
+	public static void registerUserTileVisit(String tileId)	{
+		JSONObject jsonRequestData = new JSONObject();
+
+		try {
+			jsonRequestData.put(Constants.JSON_FIELD_TILE_ID, tileId);
+
+			sendAsyncRequest(
+					Constants.JSON_METHOD_REGISTER_USER_TILE_VISIT, 
+					jsonRequestData);
+
+		} catch (JSONException e) {	e.printStackTrace(); }
+	}
+
+	/**
+	 * Register a visit to a location (i.e. that the user clicked on a location tile)
+	 * @param locationId Id of location visited
+	 * @return
+	 */
+	@AsyncRequest
+	public static void registerUserLocationVisit(String locationId)	{
+		JSONObject jsonRequestData = new JSONObject();
+
+		try {
+			jsonRequestData.put(Constants.JSON_FIELD_LOCATION_ID, locationId);
+
+			sendAsyncRequest(
+					Constants.JSON_METHOD_REGISTER_USER_LOCATION_VISIT, 
+					jsonRequestData);
+
+		} catch (JSONException e) {	e.printStackTrace(); }
+	}
+
+	/**
+	 * Register a pass by to a location (i.e. that the user passed by a location tile)
+	 * @param locationId Id of location visited
+	 * @return
+	 */
+	@AsyncRequest
+	public static void registerUserLocationPassBy(String locationId)	{
+		JSONObject jsonRequestData = new JSONObject();
+
+		try {
+			jsonRequestData.put(Constants.JSON_FIELD_LOCATION_ID, locationId);
+
+			sendAsyncRequest(
+					Constants.JSON_METHOD_REGISTER_USER_LOCATION_PASS_BY, 
+					jsonRequestData);
+
+		} catch (JSONException e) {	e.printStackTrace(); }
+	}
+
+	/**
+	 * Register this device. This method should be called each time the
+	 * user starts the app.
+	 * @return
+	 */
+	@AsyncRequest
+	public static void registerDevice()	{
+		sendAsyncRequest(Constants.JSON_METHOD_REGISTER_DEVICE, 
+				new JSONObject());
+	}
+
+}
+>>>>>>> e09b1c109b9c05b6387ad9f4b00c2acd1f962fd0

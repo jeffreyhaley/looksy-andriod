@@ -1,0 +1,65 @@
+{
+	"status":"ok",
+	"data": [
+		{
+			 "id":"100",
+			 "type":"1",
+			 "name":"Apple Store",
+			 "address":"75 Middlesex Turnpike",
+			 "city":"Burlington",
+			 "state":"MA",
+			 "zip":"01803",
+			 "website":"http://www.apple.com",
+			 "telephone":"7817248222",
+			 "starred":"true"
+		 },
+		 {
+			 "id":"101",
+			 "type":"1",
+			 "name":"Express Men",
+			 "address":"75 Middlesex Turnpike",
+			 "city":"Burlington",
+			 "state":"MA",
+			 "zip":"01803",
+			 "website":"http://www.express.com",
+			 "telephone":"7817248222",
+			 "starred":"true"
+		 },
+		 {
+			 "id":"102",
+			 "type":"1",
+			 "name":"H&M Boutique",
+			 "address":"75 Middlesex Turnpike",
+			 "city":"Burlington",
+			 "state":"MA",
+			 "zip":"01803",
+			 "website":"http://www.hm.com",
+			 "telephone":"7817248222",
+			 "starred":"false"
+		 },
+		 {
+			 "id":"103",
+			 "type":"1",
+			 "name":"Barnes & Noble",
+			 "address":"75 Middlesex Turnpike",
+			 "city":"Burlington",
+			 "state":"MA",
+			 "zip":"01803",
+			 "website":"http://www.hm.com",
+			 "telephone":"7817248222",
+			 "starred":"false"
+		 },
+		 {
+			 "id":"104",
+			 "type":"1",
+			 "name":"Macy's",
+			 "address":"75 Middlesex Turnpike",
+			 "city":"Burlington",
+			 "state":"MA",
+			 "zip":"01803",
+			 "website":"http://www.macys.com",
+			 "telephone":"7817248222",
+			 "starred":"false"
+		 }
+	]
+}

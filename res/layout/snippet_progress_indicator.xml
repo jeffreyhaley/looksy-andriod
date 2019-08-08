@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/progressGroup"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_centerHorizontal="true"
+    android:layout_centerVertical="true"
+    android:gravity="center"
+    android:background="@drawable/panel"
+    android:orientation="horizontal"
+    android:layout_marginLeft="30dp"
+    android:layout_marginRight="30dp" >
+
+    <at.looksy.fragment.TextViewRobotoRegular
+        android:id="@+id/progressText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/Notice"
+        android:visibility="gone"
+        android:gravity="center"
+        android:padding="10dp" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:padding="10dp" />
+
+</LinearLayout>

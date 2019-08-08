@@ -1,0 +1,94 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/id1"
+    android:layout_width="150dp"
+    android:layout_height="wrap_content"
+    android:background="@drawable/panel"
+    android:clipChildren="false" >
+
+    <RelativeLayout
+        android:id="@+id/payload"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <ImageView
+            android:id="@+id/imgEntity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true" />
+
+        <RelativeLayout
+            android:id="@+id/heading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/imgEntity"
+            android:layout_centerVertical="true"
+            android:padding="10dp" >
+
+            <at.looksy.fragment.TextViewRobotoMedium
+                android:id="@+id/textTileHeading"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textAppearance="@style/LocationHeading" />
+
+            <at.looksy.fragment.TextViewRobotoLight
+                android:id="@+id/textTileSubheading"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textTileHeading"
+                android:gravity="center"
+                android:textAppearance="@style/LocationSubheading" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/indicators"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@id/payload"
+        android:background="@drawable/panel_menu" >
+
+        <LinearLayout
+            android:id="@+id/btnFollowGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:layout_alignParentLeft="true"
+            android:background="@drawable/selectable_item"
+            android:padding="10dp" >
+
+            <ImageView
+                android:id="@+id/btnFollow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <at.looksy.fragment.TextViewRobotoRegular
+                android:id="@+id/btnFollowText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3dp"
+                android:textAppearance="@style/ButtonTextSmall" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/proximityIndicator"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:layout_alignParentRight="true"
+            android:padding="10dp" >
+
+            <at.looksy.fragment.TextViewRobotoLight
+                android:id="@+id/textLastSeen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/ButtonTextSmall" />
+
+            <ImageView
+                android:id="@+id/imgSignalStrength"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

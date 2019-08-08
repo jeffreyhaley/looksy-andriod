@@ -1,0 +1,25 @@
+<resources>
+	
+    <!-- specific-resource colors -->
+    
+    <color name="tile_border">#EEEEEE</color>
+    <color name="tile_border_light">#E6E6E6</color>
+	<color name="header_separator">#E2E2E2</color>
+	<color name="activity_body_background">#F2F2F2</color>
+	<color name="activity_header_background">#FFFFFF</color>
+	<color name="selector_background">#F2F2F2</color>
+	<color name="location_header_background">#EEFFFFFF</color>
+	
+	<!-- generic colors -->
+	
+	<color name="dark_gray">#999999</color>
+	<color name="light_gray">#DDDDDD</color>
+	<color name="red">#DE011B</color>
+	<color name="light_red">#E84D5F</color>
+	<color name="white">#FFFFFF</color>
+    <color name="black_overlay">#66000000</color>
+    <color name="green">#009933</color>
+    <color name="extra_light_gray">#F8F8F8</color>
+    <color name="extra_light_red">#FFF0E6</color>
+    
+</resources>

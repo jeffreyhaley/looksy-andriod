@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Looksy</string>
+    <string name="menu_show_wifi">Unique ID for WiFi</string>
+    <string name="title_activity_home">HomeActivity</string>
+    <string name="title_activity_entity_explore">EntityExploreActivity</string>
+    <string name="title_activity_entity_profile">EntityProfileActivity</string>
+    <string name="title_activity_entity_connect">EntityConnectActivity</string>
+    <string name="title_activity_entity_learn">EntityAboutActivity</string>
+    <string name="title_activity_image_view">ImageViewActivity</string>
+    <string name="title_activity_starred_tiles">StarredTilesActivity</string>
+    <string name="action_settings">Settings</string>
+    <string name="dialog_enable_wifi_title">Enable WiFi</string>
+    <string name="dialog_enable_wifi_message">To search your surroundings, Looksy requires WiFi to be enabled.</string>
+    <string name="dialog_enable_wifi_button">Enable WiFi</string>
+    <string name="title_activity_wifi_listing">WifiListingActivity</string>
+    <string name="title_your_wifi_info">Unique ID for WiFi</string>
+    <string name="title_activity_search">SearchActivity</string>
+    <string name="title_activity_location_home">LocationHome</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_tile_explore">TileExploreActivity</string>
+    <string name="title_activity_location_more_info">LocationMoreInfo</string>
+    
+    <!-- messages -->
+    <string name="activity_home_locations_appear_here">Looksy locations appear here.</string>
+    <string name="activity_home_locations_appear_here_more">As soon as you\'re within range of a Looksy location, we\'ll let you know.</string>
+    <string name="activity_favorite_locations_no_loved_locations">You haven\'t loved any locations, yet.</string>
+    <string name="activity_favorite_locations_no_loved_locations_more">Once you do, they\'ll appear here.</string>
+	<string name="activity_location_home_more_info">About</string>
+    
+</resources>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:background="@drawable/bg_header"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp" >
+
+        <ImageView
+            android:id="@+id/imgEntity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxWidth="50dp"
+            android:minHeight="65dp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:orientation="vertical" >
+
+            <at.looksy.fragment.TextViewRobotoMedium
+                android:id="@+id/textTileHeading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scrollHorizontally="true"
+				android:ellipsize="end" 
+				android:maxLines="1"
+				android:singleLine="true"
+                android:textAppearance="@style/LocationHeading" />
+
+            <at.looksy.fragment.TextViewRobotoLight
+                android:id="@+id/textTileSubheading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/LocationSubheading" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:id="@+id/btnFollowGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/selectable_item"
+            android:gravity="center" >
+
+            <ImageView
+                android:id="@+id/btnFollow"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:padding="17dp" />
+
+            <at.looksy.fragment.TextViewRobotoRegular
+                android:id="@+id/btnFollowText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="-10dp"
+                android:textAppearance="@style/ButtonText" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <View
+        android:id="@+id/locationHeaderLine"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/header_separator" />
+
+</LinearLayout>

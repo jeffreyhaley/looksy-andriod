@@ -1,0 +1,119 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activityLocationHome"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_body"
+    android:orientation="vertical"
+    tools:context=".LocationHomeActivity" >
+
+    <include
+        android:id="@+id/headerLine"
+        layout="@layout/snippet_location_menu" />
+
+    <ScrollView
+        android:id="@+id/pageContentScroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/headerLine"
+        android:overScrollMode="never"
+        android:scrollbars="none" >
+
+        <LinearLayout
+            android:id="@+id/pageContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_body"
+            android:gravity="center_horizontal"
+            android:orientation="vertical" >
+
+            <!-- Info section -->
+
+            <RelativeLayout
+                android:id="@+id/menuSection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/extra_light_gray"
+                android:padding="8dp" >
+
+                <LinearLayout
+                    android:id="@+id/sectionHours"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:gravity="center_vertical" >
+
+                    <ImageView
+                        android:id="@+id/hoursIcon"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ico_clock_48" />
+
+                    <at.looksy.fragment.TextViewRobotoMedium
+                        android:id="@+id/hoursField"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:textAppearance="@style/Notice" />
+
+                    <at.looksy.fragment.TextViewRobotoLight
+                        android:id="@+id/hoursContent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:textAppearance="@style/Notice" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/sectionMore"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:gravity="center|left" >
+
+                    <at.looksy.fragment.TextViewRobotoMedium
+                        android:id="@+id/moreContent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/activity_location_home_more_info"
+                        android:textAppearance="@style/Notice" />
+
+                    <ImageView
+                        android:id="@+id/moreIcon"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginLeft="10dp"
+                        android:src="@drawable/ico_arrow_right" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/header_separator" />
+
+            <!-- Tiles -->
+
+            <include
+                android:id="@+id/include1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                layout="@layout/snippet_tile_scroller" />
+
+            <!-- Bottom padding -->
+
+            <LinearLayout
+                android:id="@+id/sectionClosing"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:orientation="vertical" >
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <include
+        android:id="@+id/include2"
+        layout="@layout/snippet_progress_indicator" />
+
+</RelativeLayout>
